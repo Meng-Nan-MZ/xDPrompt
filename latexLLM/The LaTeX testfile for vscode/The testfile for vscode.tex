@@ -1,0 +1,431 @@
+\documentclass[fontset=windows]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{ctex}
+% \usepackage{times}
+% \usepackage{newtxtext,newtxmath}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\graphicspath{{Figures/}}
+
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks = true,
+    linkcolor = blue,
+    urlcolor = blue,
+    citecolor = blue,
+    bookmarksopen = true,
+    bookmarksnumbered = true,
+    pdftitle = {This is a testfile for vscode},
+    pdfauthor = {Ali-loner}
+}
+\bibliographystyle{plain}
+\newcommand{\upcite}[1]{\textsuperscript{\cite{#1}}}
+
+\renewcommand{\contentsname}{\centerline{Contents}}
+
+% 美化：页眉页脚
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{1553B IP核验证方案}
+\fancyhead[R]{\leftmark}
+\fancyfoot[C]{\thepage}
+
+% 美化：章节标题
+\usepackage{titlesec}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{blue}}{\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{black}}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{black}}{\thesubsubsection}{1em}{}
+
+% 美化：表格
+\usepackage{booktabs}
+\usepackage{array}
+\renewcommand{\arraystretch}{1.2}
+\setlength{\tabcolsep}{8pt}
+
+% 美化：项目符号
+\renewcommand{\labelitemi}{\textbullet}
+
+% 美化：超链接颜色
+\usepackage{xcolor}
+\definecolor{myblue}{RGB}{0,76,153}
+\hypersetup{linkcolor=myblue, urlcolor=myblue, citecolor=myblue}
+
+% 美化：段落间距
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{2em}
+
+% 美化：标题居中
+\makeatletter
+\renewcommand{\maketitle}{
+  \begin{center}
+    {\heiti\zihao{2} \@title \par}
+    \vskip 1em
+    % \@author
+    % \vskip 1em
+    % \@date
+  \end{center}
+}
+\makeatother
+
+% =====================================================
+% 目录美化
+% =====================================================
+\usepackage{tocloft}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+\setlength{\cftbeforesecskip}{2pt}
+\setlength{\cftbeforesubsecskip}{1pt}
+
+% =====================================================
+% 文档信息
+% =====================================================
+\title{\heiti\zihao{2} 基于通用星载计算机1553B总线IP核的故障诊断及容错机制升级项目实施方案}
+\author{\songti Ali-loner}
+\date{\today}
+
+% =====================================================
+% 文档开始
+% =====================================================
+\begin{document}
+
+% =====================================================
+% 封面页
+% =====================================================
+\begin{titlepage}
+    \centering
+    \vspace*{4cm}
+    {\heiti\zihao{2} 基于通用星载计算机1553B总线IP核的故障诊断及容错机制升级项目实施方案\par}
+    \vspace{2cm}
+    {\songti\zihao{4} 西安电子科技大学ICTT实验室\par}
+    \vspace{0.5cm}
+    {\zihao{4} \today\par}
+    \vfill
+\end{titlepage}
+
+\clearpage
+
+% 恢复页眉页脚
+\fancypagestyle{main}{
+  \fancyhf{}
+  \fancyhead[L]{1553B IP核验证方案}
+  \fancyhead[R]{\leftmark}
+  \fancyfoot[C]{\thepage}
+}
+\pagestyle{main}
+
+% =====================================================
+% 目录页
+% =====================================================
+\tableofcontents
+\clearpage
+
+% =====================================================
+% 正文开始
+% =====================================================
+
+\section{概述}
+1553B总线IP核是星载电子系统中重要的通信接口，负责实现控制器（BC）、远程终端（RT）和总线监控器（BM）之间的数据传输。采用IP核实现1553B控制器功能，不仅能够实现电子系统的小型化设计，而且对于降低功耗、降低成本同样具有重要的意义。与此同时，1553B IP核的可靠性之间影响系统的可靠性，因此提高1553B IP核的可靠性具有重要意义。
+
+
+\section{引用文档}
+《基于通用星载计算机1553B总线IP核的故障诊断及容错机制升级任务书》
+
+\section{1553B总线IP核及升级要求}
+\subsection{IP核概述}
+1553B总线IP核集成了BC、RT、MT三种控制器，同时寄存器、
+存储器的访问方式兼容61580芯片，其整体架构如图\ref{1}所示：
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[scale=0.5]{图1.pdf}
+	\caption{IP核结构框图}
+	\label{1}
+\end{figure}
+
+\subsection{IP核的功能特性}
+
+1553B总线IP核具备以下主要特性：
+
+\begin{itemize}
+    \item 集成BC、RT和MT三种工作模式，支持通过软件灵活配置；
+    \item 支持1553B总线协议规定的全部10种消息类型；
+    \item 支持A、B双冗余通道，并可实现自主切换；
+    \item 兼容61580芯片的寄存器访问方式及存储器管理机制；
+    \item 提供标准双口RAM，支持按用户需求裁剪容量；
+    \item \textbf{BC（总线控制器）特性：}
+    \begin{itemize}
+        \item 可配置的A/B工作区；
+        \item 多种可编程中断类型；
+        \item 自动重发功能，支持可编程的重发次数及通道选择；
+        \item 可编程的帧自动重复发送功能；
+        \item 可编程的消息间隔时间；
+    \end{itemize}
+    \item \textbf{RT（远程终端）特性：}
+    \begin{itemize}
+        \item 可配置的A/B工作区；
+        \item 多种可编程中断类型；
+        \item 可编程的RT地址；
+        \item 支持单缓冲、循环缓冲及双缓冲等多种存储器管理方案；
+        \item 可编程的非法命令表；
+        \item 可编程的MODE代码中断表；
+        \item 可编程的子地址忙表；
+    \end{itemize}
+    \item \textbf{MT（总线监控器）特性：}
+    \begin{itemize}
+        \item 支持字监视模式；
+        \item 支持可选的消息监视模式；
+    \end{itemize}
+\end{itemize}
+
+\subsection{升级要求}
+
+针对本项目的升级任务，需重点开展以下工作：
+
+\begin{itemize}
+    \item \textbf{已知缺陷修复：}
+    \begin{enumerate}[label=(\arabic*)]
+        \item 误触发中断：在特定工作场景下，存在重复触发中断的问题；
+        \item 通道切换故障：在甲方研制的RV芯片上进行1553B总线通道切换测试时，无法按照IP核手册要求实现正常切换；
+        \item RAM堆栈空间被改写：在某些场景下，1553B IP核存储于RAM空间的状态信息及消息结果被异常覆盖；
+        \item RT中断状态无法清除：RT工作于循环缓冲模式时，产生的中断状态无法被正常清除；
+        \item 国产1553B收发器拖尾问题导致接收异常：使用国产收发器时，出现消息接收异常现象。
+    \end{enumerate}
+    \item \textbf{功能完善：}
+    \begin{enumerate}[label=(\arabic*)]
+        \item MT模式下，字监测功能需支持存储空间配置；
+        \item 1553B IP核的RAM空间由固定4K$\times$16bit，升级为4K$\times$16~64K$\times$16可配置；
+        \item 开发专用的1553B IP核验证平台，提升验证效率和覆盖面。
+    \end{enumerate}
+    \item \textbf{质量要求：}
+    \begin{enumerate}[label=(\arabic*)]
+        \item 关键故障修复需达到预期效果，确保系统稳定可靠运行；
+        \item 验证平台搭建需稳定可靠，能够支持多种故障场景的模拟与测试；
+        \item 测试用例需充分覆盖全部功能点，确保高代码覆盖率；
+        \item SOC集成验证需确保IP核与甲方SOC原型系统的兼容性与稳定性。
+    \end{enumerate}
+\end{itemize}
+
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[scale=0.8]{Figures/图2.pdf}
+	\caption{升级工作流程图}
+	\label{fig:platform}
+\end{figure}
+
+
+\section{升级策略}
+\subsection{升级流程}
+本项目的输入包括任务书、IP核数据手册等相关文档，以及存放于甲方服务器上的RTL代码。
+整体升级流程分为三步，如图\ref{fig:platform}所示：
+
+
+
+\begin{enumerate}[label=(\arabic*)]
+    \item \textbf{功能点梳理与验证平台开发}：梳理1553B IP核的全部功能点，开发专用的验证平台，为后续测试和验证工作提供基础环境。
+    \item \textbf{测试用例开发与功能验证}：针对各功能点，尤其是与已知缺陷相关的部分，设计并实现测试用例，系统性验证功能正确性。采用故障注入技术，重点测试IP核的故障诊断与容错能力。
+    \item \textbf{缺陷处理与升级复测}：对发现的缺陷进行详细记录和分析，制定合理的升级方案，完成升级后进行复测，确保问题彻底解决。整个过程与甲方保持数据同步，确保信息一致。
+\end{enumerate}
+
+\subsection{验证}
+
+针对1553B总线的网络拓扑接口，本项目设计的验证平台如图所示。
+1553B总线是一种主从式半双工通信总线，网络中包含1个总线控制器（BC）、最多31个远程终端（RT）和1个总线监控器（MT），并采用双冗余总线结构。
+验证平台说明如图\ref{fig:structure}所示：
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[scale=0.6]{Figures/图3.pdf}
+	\caption{验证平台结构示意图}
+	\label{fig:structure}
+\end{figure}
+
+
+\begin{enumerate}[label=(\arabic*)]
+    \item BC、RT0-30、MT均为1553B IP核实例，分别配置为不同的功能模式。其中RT0~RT30的编号对应1553B协议规定的31个RT地址。
+    \item APB MASTER为APB总线主设备，直接连接各IP核，负责初始化、消息配置及结果读取。
+    \item 1553B收发器用于实现总线信号的三态驱动和信号畸变等功能，模拟真实物理总线环境。
+    \item 测试用例集针对1553B IP核各功能点设计，所有消息均由BC发起，APB master负责读取和配置，消息在总线上传输。
+    \item 各模式（BC、RT、MT）会将测试结果写入log文件，便于按RT地址检索和分析。
+\end{enumerate}
+
+验证平台在Linux环境下搭建，采用VCS201809作为仿真工具。平台目录结构如下：DUT位于rtl目录，仿真模型在tb目录，脚本存放于vcs目录，验证激励放在testcase目录。通过vcs目录下的Makefile运行仿真，最终生成波形文件my.vpd和log信息文件。
+
+\section{功能点及验证用例设计}
+依据IP核的实际工作场景，该IP核中有1553B编解码器的时钟，固定为16MHz，APB时钟，与16Mhz时钟为异步时钟，并且甲方测试发现，apb时钟在不同频率下，该IP核表现出了不同的结果，因此本次测试用的apb时钟分别设置为16MHz，100Mhz及500Mhz。
+\subsection{寄存器测试}
+1553B IP核的寄存器列表及属性如表\ref{tab:register-list}所示，使用APB MASTER进行读写测试。
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{|c|l|c|}
+        \hline
+        地址 & 寄存器名称 & 访问方式 \\
+        \hline
+        0   & 中断屏蔽寄存器             & RD/WR \\
+        1   & 配置寄存器1                & RD/WR \\
+        2   & 配置寄存器2                & RD/WR \\
+        3   & 启动/复位寄存器            & WR    \\
+            & 命令堆栈指针寄存器         & RD    \\
+        4   & BC控制字/RT子地址控制字寄存器 & RD \\
+        5   & 时间戳寄存器               & RD    \\
+        6   & 中断状态寄存器             & RD    \\
+        7   & 配置寄存器3                & RD/WR \\
+        8   & 配置寄存器4                & RD/WR \\
+        9   & 配置寄存器5                & RD/WR \\
+        A   & 数据堆栈寄存器             & RD    \\
+        B   & BC帧时间保持寄存器         & RD    \\
+        C   & BC下一条消息时间保持寄存器 & RD    \\
+        D   & RT上一个命令字寄存器       & RD    \\
+        E   & RT状态字寄存器             & RD    \\
+        F   & RT BIT字寄存器             & RD    \\
+        \hline
+    \end{tabular}
+    \caption{1553B IP核寄存器列表及访问方式}
+    \label{tab:register-list}
+\end{table}
+
+\subsection{RAM测试}
+1553B IP核有私有4K*16bit的RAM，进行读写测试。
+
+\subsection{1553B收发器拖尾测试}
+故障注入，模拟1553B收发器拖尾的现象，验证引发的故障。
+
+
+
+\subsection{BC功能点}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{11cm}|}
+        \hline
+        序号 & 测试内容 \\
+        \hline
+        1  & 针对1553B协议规定的10种消息类型，分别构造相应的消息，在A、B两条总线上进行发送测试，验证消息类型支持及通道切换功能。 \\
+        2  & 测试堆栈区A的消息发送功能，覆盖1条消息至64条消息的不同场景，验证堆栈区A的消息缓存与发送能力。 \\
+        3  & 测试堆栈区B的消息发送功能，覆盖1条消息至64条消息的不同场景，验证堆栈区B的消息缓存与发送能力。 \\
+        4  & 验证BC模式下消息的发送与存储功能，确保消息能够正确下发并在RAM中正确存储。 \\
+        5  & 验证BC模式下消息发送的668us超时功能，确保超时机制能够按协议要求正确响应。 \\
+        6  & 配置不同的消息间隔时间，测试BC的消息间隔功能，验证消息发送间隔的可编程性和准确性。 \\
+        7  & BC中断测试：分别测试EOM（消息结束）、EOF（帧结束）、特定消息的中断等，验证中断响应的正确性。 \\
+        8  & 消息重试功能测试：通过故障注入，发送消息后重试1次，更换总线，重试1次后成功，验证重试及总线切换机制。 \\
+        9  & 消息重试功能测试：通过故障注入，发送消息后重试1次，更换总线，重试1次后不成功，验证失败处理机制。 \\
+        10 & 消息重试功能测试：通过故障注入，发送消息后重试1次，不更换总线，重试1次后成功，验证同一总线重试机制。 \\
+        11 & 消息重试功能测试：通过故障注入，发送消息后重试1次，更换总线，重试1次后不成功，验证多次失败处理。 \\
+        12 & 消息重试功能测试：通过故障注入，发送消息后重试1次，更换总线，重试2次后成功，验证多次重试及切换机制。 \\
+        \hline
+    \end{tabular}
+    \caption{BC功能点测试项汇总}
+    \label{tab:bc-feature-summary}
+\end{table}
+
+
+
+\subsection{RT功能点}
+
+\begin{table}[H] % 使用 [H] 强制表格紧跟在当前位置，需要 float 宏包
+    \centering
+    \begin{tabular}{|c|p{10cm}|}
+        \hline
+        序号 & 测试内容 \\
+        \hline
+        1  & RT中断测试，EOM中断 \\
+        2  & RT中断测试，SA EOM中断 \\
+        3  & RT中断测试，循环缓冲卷回中断，设置缓冲区256、512、1024、2048大小 \\
+        4  & RT响应时间测试 \\
+        5  & RT响应超时测试-故障注入 \\
+        6  & RT发送消息超时测试-故障注入 \\
+        7  & RT接收缓冲区配置不同地址的测试 \\
+        8  & RT发送缓冲区配置不同地址的测试 \\
+        9  & RT广播缓冲区配置不同地址的测试 \\
+        10 & RT堆栈A，消息索引功能，测试 \\
+        11 & RT堆栈B，消息索引功能，测试 \\
+        12 & RT堆栈A，卷回测试 \\
+        13 & RT堆栈B，卷回测试 \\
+        14 & RT消息存储功能 \\
+        15 & RT消息循环缓冲模式-发送消息测试，设置缓冲区256、512、1024、2048大小 \\
+        16 & RT消息循环缓冲模式-接收消息测试，设置缓冲区256、512、1024、2048大小 \\
+        17 & RT消息双缓冲模式-发送消息测试 \\
+        18 & RT消息双缓冲模式-接收消息测试 \\
+        19 & RT消息非法化测试 \\
+        20 & RT消息子地址忙测试 \\
+        \hline
+    \end{tabular}
+    \caption{RT功能点测试项汇总}
+    \label{tab:rt-feature-summary}
+\end{table}
+
+
+\subsection{MT功能点}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|p{10cm}|}
+        \hline
+        序号 & 测试内容 \\
+        \hline
+        1 & MT的中断测试 \\
+        2 & MT的消息存储测试 \\
+        3 & MT的字监视功能测试 \\
+        4 & MT的消息监视功能测试 \\
+        \hline
+    \end{tabular}
+    \caption{MT功能点测试项汇总}
+    \label{tab:mt-feature-summary}
+\end{table}
+
+\section{SOC集成与验证}
+在验证过程中，将IP核集成到甲方的SOC中，并进行板级测试。
+具体流程包括：首先将经过仿真验证的1553B IP核集成到SOC设计中，完成RTL级的集成和接口适配。随后，进行SOC的综合、布局布线和流片，获得实际的芯片样品。将芯片焊接到开发板或测试板上，搭建完整的硬件测试环境。通过板级测试，验证IP核在SOC系统中的功能、性能和稳定性，包括与其他模块的协同工作、接口时序、数据传输正确性等。同时，结合自动化测试脚本，对各项功能点和异常场景进行全面测试，确保IP核在实际应用环境下的可靠性和兼容性。测试过程中发现的问题将及时反馈并修正，直至满足项目要求。
+
+\section{验证进度安排}
+
+\begin{table}[htbp]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        序号 & 任务项 & 完成时间 & 交付物 \\
+        \hline
+        1 & 故障诊断及升级 & 合同签订后6周内 & 设计报告、RTL代码 \\
+        \hline
+        2 & 仿真验证阶段 & 合同签订后15周内 & 测试报告、验证平台及测试用例 \\
+        \hline
+        3 & 验收阶段 & 合同签订后16周内 & 研制总结报告 \\
+        \hline
+    \end{tabular}
+    \caption{研制进度安排}
+    \label{tab:schedule}
+\end{table}
+
+\section{质量保证措施}
+
+针对本项目的验证工作，拟采取以下质量保证措施：
+
+\begin{enumerate}[label=(\arabic*)]
+    \item \textbf{基于覆盖率驱动的验证用例设计} \\
+    采用覆盖率驱动的验证方法，能够量化验证进度，确保验证的全面性和科学性。本项目设定的覆盖率目标为：功能覆盖率达到100\%，代码测试覆盖率达到90\%（包括分支覆盖率、状态机覆盖率、行覆盖率），对于未覆盖的语句需进行说明。实现功能点100\%覆盖的前提是功能点明确定义，第5章已汇总本设计的全部功能点。在验证实施过程中，将结合代码覆盖率、总线协议符合性等信息，与设计人员协作，持续完善和补充验证点列表。
+    \item \textbf{加强阶段性评审} \\
+    通过阶段性评审，完善验证场景，补充功能点和验证用例。项目设置至少三个评审节点：1）实施方案评审；2）RTL升级后评审；3）仿真验证结果评审。根据每次评审结果，动态补充和完善验证用例，确保验证工作的系统性和完整性。
+\end{enumerate}
+
+\section{风险分析和解决措施}
+
+本项目验证工作主要存在以下风险及应对措施：
+
+\begin{enumerate}[label=(\arabic*)]
+    \item \textbf{验证点遗漏风险} \\
+    \textbf{风险描述：} 功能点主要依据设计中各模块的主要功能特性进行定义，实际操作中可能存在部分验证点遗漏的情况。\\
+    \textbf{解决措施：}（1）采用“功能点+代码覆盖率”相结合的方式，确保验证的全面性。如果功能点均已覆盖但代码覆盖率仍不高，需警惕功能点列举是否存在遗漏；（2）通过阶段性评审或与设计人员协作，持续完善和补充验证点列表，降低遗漏风险。
+    \item \textbf{验证进度失控风险} \\
+    \textbf{风险描述：} 验证进度失控的主要原因包括：对验证结果缺乏信心，导致不断补充和修改验证用例，影响整体进度。\\
+    \textbf{解决措施：} 与设计人员共同梳理和讨论典型工作场景，科学合理地构建测试用例，避免盲目开发。结合功能覆盖率和代码覆盖率等量化指标，客观评价验证用例的质量和有效性，确保验证工作有序推进。
+\end{enumerate}
+
+\bibliography{books}
+\end{document}
