@@ -13,6 +13,7 @@
 - 自动化办公脚本与工具
 - LLM 助手插件推荐
 - 经验分享与最佳实践
+- **latexLLM**：LaTeX 办公场景下的 prompt 示例与测试文件（需本地配置 LaTeX 环境，详见 `latexLLM/README.md`）
 
 ## 使用说明
 
@@ -21,7 +22,8 @@
    git clone https://github.com/Meng-Nan-MZ/xDPrompt.git
    ```
 2. 按需查阅各目录下的内容，结合自身办公需求进行参考或二次开发。
-3. 欢迎提交 Issues 或 Pull Request 共同完善内容。
+3. `latexLLM` 目录下的内容需本地安装 LaTeX 环境，具体要求见其子目录说明。
+4. 欢迎提交 Issues 或 Pull Request 共同完善内容。
 
 ## 贡献方式
 
@@ -32,8 +34,3 @@
 
 如有疑问或建议，可通过 [GitHub Issues](https://github.com/Meng-Nan-MZ/xDPrompt/issues) 反馈。
 
----
-
-[GitHub 仓库地址](https://github.com/Meng-Nan-MZ/xDPrompt)
-
----
